@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane pickOnBounds="false" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.MainController">
+   <children>
+      <Pane prefHeight="443.0" prefWidth="741.0">
+         <children>
+            <Button id="startServerBtn" fx:id="startStopServerBtn" defaultButton="true" layoutX="532.0" layoutY="77.0" mnemonicParsing="false" onAction="#startStopServer" prefHeight="27.0" prefWidth="191.0" text="Start Server" textAlignment="CENTER" />
+            <MenuBar prefHeight="29.0" prefWidth="742.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="Actions">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#clearConsole" text="Clear Console" />
+                        <MenuItem mnemonicParsing="false" onAction="#updateIP" text="Update IP" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <TextArea fx:id="logArea" editable="false" layoutX="14.0" layoutY="75.0" prefHeight="319.0" prefWidth="480.0" />
+            <Label layoutX="14.0" layoutY="47.0" text="Log" />
+            <Label layoutX="294.0" layoutY="38.0" text="Restaurant Server" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label id="ipLabel" fx:id="ipLabel" layoutX="25.0" layoutY="404.0" prefHeight="17.0" prefWidth="287.0" text="Server's IP: NONE" />
+            <TextField fx:id="restPortInput" layoutX="651.0" layoutY="115.0" prefHeight="27.0" prefWidth="70.0" text="1234" />
+            <Label layoutX="535.0" layoutY="120.0" prefHeight="17.0" prefWidth="83.0" text="Rest PORT:" />
+            <Label layoutX="535.0" layoutY="162.0" text="Socket PORT:" />
+            <TextField fx:id="socketPortInput" layoutX="652.0" layoutY="158.0" prefHeight="27.0" prefWidth="70.0" text="2222" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

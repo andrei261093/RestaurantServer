@@ -1,0 +1,48 @@
+package SocketServer;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+/**
+ * Created by andreiiorga on 15/06/2017.
+ */
+
+
+public class ClientHandler implements Runnable {
+    BufferedReader reader;
+
+    Socket sock;
+    PrintWriter client;
+    TCPServer tcpServer;
+
+    public ClientHandler(Socket clientSocket, PrintWriter user, TCPServer tcpServer) {
+        client = user;
+        this.tcpServer = tcpServer;
+        try {
+            sock = clientSocket;
+            InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
+            reader = new BufferedReader(isReader);
+        } catch (Exception ex) {
+            tcpServer.log("Unexpected error...");
+        }
+
+    }
+
+    @Override
+    public void run() {
+        String message;
+
+        try {
+            while ((message = reader.readLine()) != null) {
+                tcpServer.log("Received: " + message );
+            }
+        } catch (Exception ex) {
+            tcpServer.log("Lost a connection.");
+            ex.printStackTrace();
+            tcpServer.clientOutputStreams.remove(client);
+        }
+    }
+}
+
