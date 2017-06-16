@@ -7,7 +7,7 @@ public class UtilStaticVariables {
     public static int REST_SERVER_PORT = 1234;
     public static int SOCKET_SERVER_PORT = 2345;
 
-    public static String CATEGORY_DRINK = "drink";
-    public static String CATEGORY_FOOD = "food";
-    public static String CATEGORY_SNACK = "snack";
+    public static String LEVEL_LOG = "LOG";
+    public static String LEVEL_WARNING = "WARNING";
+    public static String LEVEL_ERROR = "ERROR";
 }

@@ -1,12 +1,16 @@
 package SocketServer;
 
 import Controllers.MainController;
+import javafx.application.Platform;
 import staticUtils.UtilStaticVariables;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by andreiiorga on 15/06/2017.
@@ -14,9 +18,10 @@ import java.util.Iterator;
 public class TCPServer implements Runnable {
     private MainController mainController;
     ArrayList clientOutputStreams;
-    ArrayList<String> users;
     private volatile boolean isRunning = true;
-    private  Thread listener;
+    private Thread listener;
+    private ServerSocket serverSock;
+    private List<Socket> clients = new ArrayList<>();
 
     public TCPServer(MainController mainController) {
         this.mainController = mainController;
@@ -25,23 +30,26 @@ public class TCPServer implements Runnable {
     @Override
     public void run() {
         clientOutputStreams = new ArrayList();
-        users = new ArrayList();
 
         try {
-            ServerSocket serverSock = new ServerSocket(UtilStaticVariables.SOCKET_SERVER_PORT);
+            serverSock = new ServerSocket(UtilStaticVariables.SOCKET_SERVER_PORT);
 
             while (isRunning) {
                 Socket clientSock = serverSock.accept();
+                clients.add(clientSock);
                 PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
                 clientOutputStreams.add(writer);
 
                 listener = new Thread(new ClientHandler(clientSock, writer, this));
                 listener.start();
-                mainController.log("Got a connection.");
-                tellEveryone("mesaj de la server");
+                setKitchenConnected(true);
+                mainController.log("Kitchen has connected!");
+
+                tellEveryone("HELLO KITCHEN \n");
             }
         } catch (Exception ex) {
-            mainController.log("Error making a connection.");
+            ex.printStackTrace();
+            mainController.log("TCP Server: Server Stopped!", UtilStaticVariables.LEVEL_WARNING);
         }
     }
 
@@ -52,7 +60,7 @@ public class TCPServer implements Runnable {
             try {
                 PrintWriter writer = (PrintWriter) it.next();
                 writer.println(message);
-                mainController.log("Sending: " + message );
+                //mainController.log("Sending: " + message);
                 writer.flush();
 
             } catch (Exception ex) {
@@ -61,42 +69,26 @@ public class TCPServer implements Runnable {
         }
     }
 
-    public void userAdd(String data) {
-        String message, add = ": :Connect", done = "Server: :Done", name = data;
-        mainController.log("Before " + name + " added.");
-        users.add(name);
-        mainController.log("After " + name + " added.");
-        String[] tempList = new String[(users.size())];
-        users.toArray(tempList);
-
-        for (String token : tempList) {
-            message = (token + add);
-            tellEveryone(message);
-        }
-        tellEveryone(done);
-    }
-
     public void log(String msg) {
         mainController.log(msg);
     }
 
-    public void userRemove (String data)
-    {
-        String message, add = ": :Connect", done = "Server: :Done", name = data;
-        users.remove(name);
-        String[] tempList = new String[(users.size())];
-        users.toArray(tempList);
+    public void log(String msg, String lvl) {
+        mainController.log(msg, lvl);
+    }
 
-        for (String token:tempList)
-        {
-            message = (token + add);
-            tellEveryone(message);
+    public void closeServer() throws IOException {
+        isRunning = false;
+        serverSock.close();
+        for (Socket client: clients) {
+            client.close();
         }
-        tellEveryone(done);
+        clients.clear();
     }
 
-    public void kill() {
-        listener.interrupt();
+    public void setKitchenConnected(boolean b) {
+        Platform.runLater(() -> {
+            mainController.setKitchenConnected(b);
+        });
     }
-
 }

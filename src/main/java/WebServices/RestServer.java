@@ -70,7 +70,7 @@ public class RestServer {
         }
         rd.close();
 
-        mainController.log("Server stoped.");
+        mainController.log("Rest Server: Server Stopped!");
 
     }
 
