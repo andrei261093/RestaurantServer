@@ -20,6 +20,7 @@ public class Main extends Application {
             System.exit(0);
         });
         primaryStage.show();
+        //inna
     }
 
 
