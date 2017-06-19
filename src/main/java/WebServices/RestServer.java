@@ -5,6 +5,7 @@ package WebServices;
  */
 import Controllers.MainController;
 import com.google.gson.Gson;
+import javafx.application.Platform;
 import repositories.MotherOfRepositories;
 import staticUtils.UtilStaticVariables;
 
@@ -32,6 +33,7 @@ public class RestServer {
         port(UtilStaticVariables.REST_SERVER_PORT);
 
         get("/helloworld", (request, response) -> {
+            mainController.log("Route /helloworld has been accessed");
             return "Hello World!";
         });
 
@@ -69,9 +71,9 @@ public class RestServer {
             result.append(line);
         }
         rd.close();
-
-        mainController.log("Rest Server: Server Stopped!");
-
+        Platform.runLater(() -> {
+            mainController.log("Rest Server: Server Stopped!", UtilStaticVariables.LEVEL_WARNING);
+        });
     }
 
 }

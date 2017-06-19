@@ -48,6 +48,7 @@ public class ClientHandler implements Runnable {
                 }
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             tcpServer.log("Kitchen has disconnected!", UtilStaticVariables.LEVEL_WARNING);
             tcpServer.setKitchenConnected(false);
             tcpServer.clientOutputStreams.remove(client);

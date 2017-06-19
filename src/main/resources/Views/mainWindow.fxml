@@ -44,8 +44,8 @@
             <Label layoutX="535.0" layoutY="162.0" text="Socket PORT:" />
             <TextField fx:id="socketPortInput" layoutX="652.0" layoutY="158.0" prefHeight="27.0" prefWidth="70.0" text="2222" />
             <Label fx:id="tcpIpLabel" layoutX="400.0" layoutY="405.0" prefHeight="16.0" prefWidth="280.0" text="TCP Server Address: NONE" />
-            <Label layoutX="526.0" layoutY="227.0" prefHeight="16.0" prefWidth="83.0" text="Kitchen status:" />
-            <Label fx:id="kitchenStatusLabel" layoutX="605.0" layoutY="225.0" text="Offline!" textAlignment="CENTER" textFill="#f80505">
+            <Label layoutX="526.0" layoutY="227.0" prefHeight="17.0" prefWidth="110.0" text="Kitchen status:" />
+            <Label fx:id="kitchenStatusLabel" layoutX="656.0" layoutY="223.0" text="Offline!" textAlignment="CENTER" textFill="#f80505">
                <font>
                   <Font size="14.0" />
                </font>
@@ -53,8 +53,8 @@
                   <Glow />
                </effect>
             </Label>
-            <Label layoutX="526.0" layoutY="267.0" prefHeight="16.0" prefWidth="76.0" text="System Status:" />
-            <Label fx:id="systemStatusLabel" layoutX="605.0" layoutY="267.0" text="Offline!" textFill="RED">
+            <Label layoutX="526.0" layoutY="267.0" prefHeight="17.0" prefWidth="95.0" text="System Status:" />
+            <Label fx:id="systemStatusLabel" layoutX="656.0" layoutY="265.0" text="Offline!" textFill="RED">
                <font>
                   <Font size="14.0" />
                </font>
