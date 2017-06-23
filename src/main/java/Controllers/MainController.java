@@ -75,13 +75,9 @@ public class MainController {
         });
 
         motherOfRepositories = new MotherOfRepositories();
+        motherOfRepositories.seed();
         restServer = new RestServer(this, motherOfRepositories);
 
-        /*Category mancare = new Category("mancare");
-        Category bautura = new Category("bautura");
-
-        motherOfRepositories.getCategoryRepository().save(mancare);
-        motherOfRepositories.getCategoryRepository().save(bautura);*/
     }
 
     public void startStopServer(ActionEvent actionEvent) {

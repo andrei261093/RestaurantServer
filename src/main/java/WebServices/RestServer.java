@@ -3,10 +3,14 @@ package WebServices;
 /**
  * Created by andreiiorga on 14/06/2017.
  */
+
 import Controllers.MainController;
 import com.google.gson.Gson;
 import javafx.application.Platform;
+import model.RestaurantTable;
 import repositories.MotherOfRepositories;
+import spark.Request;
+import spark.Response;
 import staticUtils.UtilStaticVariables;
 
 import java.io.BufferedReader;
@@ -32,30 +36,47 @@ public class RestServer {
     public void startServer() {
         port(UtilStaticVariables.REST_SERVER_PORT);
 
+
+        //routes
         get("/helloworld", (request, response) -> {
             mainController.log("Route /helloworld has been accessed");
             return "Hello World!";
         });
 
-        get("/stopserver", (request, response) -> {
-            stop();
-            return  "sf";
+        get("/hello", RestServer::hello);
+
+        get("/getTable/:name", (request, response) -> {
+            RestaurantTable restaurantTable = motherOfRepositories.getRestaurantTableRepository().getByName(request.params(":name"));
+            mainController.log("Route /getTable/:name has been accessed");
+            //mainController.log(gson.toJson(restaurantTable));
+            return gson.toJson(restaurantTable);
         });
 
         get("/getCategories", (request, response) -> {
             mainController.log("Route /getCategories has been accessed");
             String json = gson.toJson(motherOfRepositories.getCategoryRepository().findAll());
-            mainController.log(json);
             return json;
         });
 
         get("/getProducts", (request, response) -> {
             mainController.log("Route /getProducts has been accessed");
             String json = gson.toJson(motherOfRepositories.getProductRepository().findAll());
-            mainController.log(json);
             return json;
         });
 
+
+        //stop server
+        after((request, response) -> {
+            if (response.raw().getStatus() == 404) {
+                // here run the code that will report the error e.g.
+                mainController.log("An error has occurred!!", UtilStaticVariables.LEVEL_ERROR);
+            }
+        });
+
+        get("/stopserver", (request, response) -> {
+            stop();
+            return "sf";
+        });
 
         mainController.log("Server is up and running...");
     }
@@ -76,4 +97,7 @@ public class RestServer {
         });
     }
 
+    private static String hello(Request request, Response response) {
+        return "hello world!";
+    }
 }

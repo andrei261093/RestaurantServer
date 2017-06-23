@@ -35,7 +35,6 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         String message;
-
         try {
             while ((message = reader.readLine()) != null) {
 

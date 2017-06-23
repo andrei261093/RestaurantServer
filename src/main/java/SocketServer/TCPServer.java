@@ -48,7 +48,6 @@ public class TCPServer implements Runnable {
                 tellEveryone("HELLO KITCHEN \n");
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             mainController.log("TCP Server: Server Stopped!", UtilStaticVariables.LEVEL_WARNING);
         }
     }

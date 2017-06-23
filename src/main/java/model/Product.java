@@ -1,6 +1,7 @@
 package model;
 
 import javax.persistence.*;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -15,26 +16,21 @@ public class Product implements Serializable{
 
     private String name;
     private String shortDescription;
+    @Column(length = 600)
     private String longDescription;
+    private String imageUrl;
     private int category;
     private int price;
     private int weight;
 
-    public Product(String name, String shortDescription, String longDescription, int category, int price, int weight) {
+    public Product(String name, String shortDescription, String longDescription, String imageUrl, int category, int price, int weight) {
         this.name = name;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
+        this.imageUrl = imageUrl;
         this.category = category;
         this.price = price;
         this.weight = weight;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -59,6 +55,14 @@ public class Product implements Serializable{
 
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public int getCategory() {
