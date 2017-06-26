@@ -5,9 +5,14 @@ package WebServices;
  */
 
 import Controllers.MainController;
+import Controllers.TaskAssigner;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import javafx.application.Platform;
 import model.RestaurantTable;
+import org.eclipse.jetty.util.MultiMap;
+import org.eclipse.jetty.util.UrlEncoded;
+import org.json.JSONObject;
 import repositories.MotherOfRepositories;
 import spark.Request;
 import spark.Response;
@@ -26,11 +31,13 @@ public class RestServer {
     private MainController mainController;
     private MotherOfRepositories motherOfRepositories;
     private Gson gson;
+    private TaskAssigner taskAssigner;
 
-    public RestServer(MainController mainController, MotherOfRepositories motherOfRepositories) {
+    public RestServer(MainController mainController, MotherOfRepositories motherOfRepositories, TaskAssigner taskAssigner) {
         this.mainController = mainController;
         this.motherOfRepositories = motherOfRepositories;
         this.gson = new Gson();
+        this.taskAssigner = taskAssigner;
     }
 
     public void startServer() {
@@ -47,22 +54,48 @@ public class RestServer {
 
         get("/getTable/:name", (request, response) -> {
             RestaurantTable restaurantTable = motherOfRepositories.getRestaurantTableRepository().getByName(request.params(":name"));
-            mainController.log("Route /getTable/:name has been accessed");
+            mainController.log("GET: /getTable/" + request.params(":name"));
             //mainController.log(gson.toJson(restaurantTable));
             return gson.toJson(restaurantTable);
         });
 
         get("/getCategories", (request, response) -> {
-            mainController.log("Route /getCategories has been accessed");
+          //  mainController.log("GET: /getCategories");
             String json = gson.toJson(motherOfRepositories.getCategoryRepository().findAll());
             return json;
         });
 
         get("/getProducts", (request, response) -> {
-            mainController.log("Route /getProducts has been accessed");
+         //   mainController.log("GET: /getProducts");
             String json = gson.toJson(motherOfRepositories.getProductRepository().findAll());
             return json;
         });
+
+        post("/checkOrder", (request, response) -> {
+            MultiMap<String> params = new MultiMap<String>();
+            UrlEncoded.decodeTo(request.body(), params, "UTF-8");
+            String order = params.getString("order");
+            JSONObject jsonObject = new JSONObject(order);
+
+         //  mainController.log("POST: /checkOrder");
+            taskAssigner.checkOrder(jsonObject);
+
+            return "200";
+        });
+
+        post("/newOrder", (request, response) -> {
+            MultiMap<String> params = new MultiMap<String>();
+            UrlEncoded.decodeTo(request.body(), params, "UTF-8");
+            String order = params.getString("order");
+            JSONObject jsonObject = new JSONObject(order);
+
+           // mainController.log("POST: /newOrder");
+            taskAssigner.newOrder(jsonObject);
+
+            return "200";
+        });
+
+
 
 
         //stop server

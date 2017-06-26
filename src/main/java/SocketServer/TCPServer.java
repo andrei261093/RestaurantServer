@@ -1,7 +1,9 @@
 package SocketServer;
 
 import Controllers.MainController;
+import Controllers.TaskAssigner;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import staticUtils.UtilStaticVariables;
 
 import java.io.IOException;
@@ -22,15 +24,16 @@ public class TCPServer implements Runnable {
     private Thread listener;
     private ServerSocket serverSock;
     private List<Socket> clients = new ArrayList<>();
+    private TaskAssigner taskAssigner;
 
-    public TCPServer(MainController mainController) {
+    public TCPServer(MainController mainController, TaskAssigner taskAssigner) {
         this.mainController = mainController;
+        this.taskAssigner = taskAssigner;
+        clientOutputStreams = new ArrayList();
     }
 
     @Override
     public void run() {
-        clientOutputStreams = new ArrayList();
-
         try {
             serverSock = new ServerSocket(UtilStaticVariables.SOCKET_SERVER_PORT);
 
@@ -45,7 +48,7 @@ public class TCPServer implements Runnable {
                 setKitchenConnected(true);
                 mainController.log("Kitchen has connected!");
 
-                tellEveryone("HELLO KITCHEN \n");
+                tellEveryone("HELLO KITCHEN");
             }
         } catch (Exception ex) {
             mainController.log("TCP Server: Server Stopped!", UtilStaticVariables.LEVEL_WARNING);
@@ -59,7 +62,6 @@ public class TCPServer implements Runnable {
             try {
                 PrintWriter writer = (PrintWriter) it.next();
                 writer.println(message);
-                //mainController.log("Sending: " + message);
                 writer.flush();
 
             } catch (Exception ex) {
@@ -79,7 +81,7 @@ public class TCPServer implements Runnable {
     public void closeServer() throws IOException {
         isRunning = false;
         serverSock.close();
-        for (Socket client: clients) {
+        for (Socket client : clients) {
             client.close();
         }
         clients.clear();

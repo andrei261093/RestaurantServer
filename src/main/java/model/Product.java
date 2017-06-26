@@ -22,8 +22,9 @@ public class Product implements Serializable{
     private int category;
     private int price;
     private int weight;
+    private Boolean needsPreparation;
 
-    public Product(String name, String shortDescription, String longDescription, String imageUrl, int category, int price, int weight) {
+    public Product(String name, String shortDescription, String longDescription, String imageUrl, int category, int price, int weight, Boolean needsPreparation) {
         this.name = name;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
@@ -31,6 +32,7 @@ public class Product implements Serializable{
         this.category = category;
         this.price = price;
         this.weight = weight;
+        this.needsPreparation = needsPreparation;
     }
 
     public String getName() {
@@ -87,5 +89,13 @@ public class Product implements Serializable{
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public Boolean getNeedsPreparation() {
+        return needsPreparation;
+    }
+
+    public void setNeedsPreparation(Boolean needsPreparation) {
+        this.needsPreparation = needsPreparation;
     }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="287.0" prefWidth="526.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ChunkViewController">
+   <children>
+      <Pane prefHeight="337.0" prefWidth="577.0">
+         <children>
+            <Label layoutX="14.0" layoutY="34.0" text="Order Chunk for Table:" />
+            <Label fx:id="tableNoLbl" layoutX="163.0" layoutY="34.0" text="N/A" />
+            <TableView fx:id="productTable" layoutX="14.0" layoutY="61.0" prefHeight="262.0" prefWidth="548.0">
+              <columns>
+                <TableColumn fx:id="productId" prefWidth="47.0" text="ID" />
+                <TableColumn fx:id="productName" prefWidth="168.0" text="Name" />
+                  <TableColumn fx:id="productDescription" prefWidth="269.0" text="Description" />
+                  <TableColumn fx:id="productPrice" minWidth="0.0" prefWidth="63.0" text="Price" />
+              </columns>
+            </TableView>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

@@ -78,7 +78,7 @@ public class MotherOfRepositories {
                 "1 conserva rosii cuburi\n" +
                 "oregano\n" +
                 "sare de mare\n" +
-                "piper", "http://www.retetekulinare.ro/wp-content/uploads/2011/11/pizza-capriciosa1.jpg", pizza.getId(), 17, 300);
+                "piper", "http://www.retetekulinare.ro/wp-content/uploads/2011/11/pizza-capriciosa1.jpg", pizza.getId(), 17, 300, true);
 
         Product quatroStagioni = new Product("Quattro Stagioni", "32 cm","Ingrediente:\n" +
                 "\n" +
@@ -103,7 +103,7 @@ public class MotherOfRepositories {
                 "1 conserva rosii cuburi\n" +
                 "oregano\n" +
                 "sare de mare\n" +
-                "piper", "http://www.pizzeria-largo.com/wp-content/uploads/2016/06/pizza-quatro-stagioni.jpg", pizza.getId(), 16, 320);
+                "piper", "http://www.pizzeria-largo.com/wp-content/uploads/2016/06/pizza-quatro-stagioni.jpg", pizza.getId(), 16, 320, true);
 
         Product porc = new Product("Friptura de porc", "cu cartofi prajiti","Ingrediente:\n" +
                 "\n" +
@@ -128,11 +128,15 @@ public class MotherOfRepositories {
                 "1 conserva rosii cuburi\n" +
                 "oregano\n" +
                 "sare de mare\n" +
-                "piper", "http://assets.sport.ro/assets/foodstory/2013/12/13/image_galleries/3564/3-alternative-pentru-traditionala-friptura-de-porc_size1.jpg", friptura.getId(), 16, 320);
+                "piper", "http://assets.sport.ro/assets/foodstory/2013/12/13/image_galleries/3564/3-alternative-pentru-traditionala-friptura-de-porc_size1.jpg", friptura.getId(), 16, 320, true);
+
+
+
+        Product cola = new Product("Coca Cola", "racoritoare", "Descriere lunga", "http://www.coca-cola.co.uk/content/dam/journey/gb/en/hidden/Newsroom/Coca-Cola-Zero-Sugar-launch-596x334.jpg", racoritoare.getId(), 7, 330, false);
 
         productRepository.save(capriciosa);
-
         productRepository.save(quatroStagioni);
         productRepository.save(porc);
+        productRepository.save(cola);
     }
 }

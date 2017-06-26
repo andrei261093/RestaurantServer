@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane pickOnBounds="false" prefHeight="514.0" prefWidth="548.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.TableSessionController">
+   <children>
+      <ListView fx:id="tableSessionsList" layoutX="22.0" layoutY="73.0" onMouseClicked="#tableSessionsOnMouseClicked" prefHeight="424.0" prefWidth="230.0" />
+      <ListView fx:id="orderChuncksList" layoutX="294.0" layoutY="73.0" onMousePressed="#showChunkDetails" prefHeight="424.0" prefWidth="230.0" />
+      <Label layoutX="22.0" layoutY="37.0" text="Open Table Sessions" />
+      <Label layoutX="294.0" layoutY="37.0" text="Order Chuncks" />
+      <Button fx:id="refreshBtn" layoutX="458.0" layoutY="14.0" mnemonicParsing="false" onAction="#refreshLists" text="Refresh" />
+   </children>
+</AnchorPane>

@@ -6,20 +6,26 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import model.Category;
+import javafx.stage.Stage;
+import model.TableSession;
+import org.json.JSONObject;
 import repositories.MotherOfRepositories;
 import staticUtils.UtilStaticVariables;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MainController {
 
@@ -52,6 +58,7 @@ public class MainController {
     private MotherOfRepositories motherOfRepositories;
     private TCPServer tcpServer;
     private Thread myThread;
+    private TaskAssigner taskAssigner;
 
     @FXML
     public void initialize() {
@@ -73,11 +80,10 @@ public class MainController {
                 }
             }
         });
-
         motherOfRepositories = new MotherOfRepositories();
         motherOfRepositories.seed();
-        restServer = new RestServer(this, motherOfRepositories);
-
+        taskAssigner = new TaskAssigner(this, motherOfRepositories);
+        restServer = new RestServer(this, motherOfRepositories, taskAssigner);
     }
 
     public void startStopServer(ActionEvent actionEvent) {
@@ -90,7 +96,7 @@ public class MainController {
             restServer.startServer();
 
             //socket server
-            tcpServer = new TCPServer(this);
+            tcpServer = new TCPServer(this, taskAssigner);
             myThread = new Thread(tcpServer);
             myThread.start();
 
@@ -149,7 +155,7 @@ public class MainController {
     }
 
     public void updateIP() {
-        if(isServerRunning){
+        if (isServerRunning) {
             String ip = "";
             try {
                 ip += Inet4Address.getLocalHost().getHostAddress();
@@ -159,21 +165,46 @@ public class MainController {
             }
             ipLabel.setText("Rest Server Address: " + ip + ":" + UtilStaticVariables.REST_SERVER_PORT);
             tcpIpLabel.setText("TCP Server Address: " + ip + ":" + UtilStaticVariables.SOCKET_SERVER_PORT);
-        }else{
+        } else {
             ipLabel.setText("Rest Server is not running");
             tcpIpLabel.setText("TCP Server is not running");
         }
 
     }
 
-    public void setKitchenConnected(Boolean ok){
-        if(ok){
+    public void setKitchenConnected(Boolean ok) {
+        if (ok) {
             kitchenStatusLabel.setText("Online!");
             kitchenStatusLabel.setTextFill(Color.GREEN);
-        }else{
+        } else {
             kitchenStatusLabel.setText("Offline!");
             kitchenStatusLabel.setTextFill(Color.RED);
         }
     }
 
+    public void sendToKitchen(JSONObject order) {
+        tcpServer.tellEveryone(order.toString());
+        log("Order for table " + order.getString("tableNo") + " sent to kitchen");
+    }
+
+    public void showTableSessions(ActionEvent actionEvent) {
+            Parent root;
+            try {
+
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/tableSessions.fxml"));
+                Stage primaryStage = new Stage();
+                Parent root2 = loader.load();
+                primaryStage.setTitle("Licenta Andrei Iorga 2017");
+                primaryStage.setScene(new Scene(root2));
+                primaryStage.setResizable(false);
+                TableSessionController tableSessionController = loader.getController();
+                tableSessionController.setTableSessions(taskAssigner.getTables());
+                primaryStage.show();
+
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
 }
