@@ -44,6 +44,7 @@ public class ClientHandler implements Runnable {
                     tcpServer.setKitchenConnected(false);
                 }else{
                     tcpServer.log("From KITCHEN: " + msg[1]);
+                    tcpServer.sendToTaskAssigner(message);
                 }
             }
         } catch (Exception ex) {

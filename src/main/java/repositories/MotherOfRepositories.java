@@ -1,8 +1,6 @@
 package repositories;
 
-import model.Category;
-import model.Product;
-import model.RestaurantTable;
+import model.*;
 
 /**
  * Created by andreiiorga on 15/06/2017.
@@ -11,11 +9,15 @@ public class MotherOfRepositories {
     private CategoryRepository categoryRepository;
     private ProductRepository productRepository;
     private RestaurantTableRepository restaurantTableRepository;
+    private WaiterRepository waiterRepository;
+    private TaskRepository taskRepository;
 
     public MotherOfRepositories() {
         categoryRepository = new CategoryRepository();
         productRepository = new ProductRepository();
         restaurantTableRepository = new RestaurantTableRepository();
+        waiterRepository = new WaiterRepository();
+        taskRepository = new TaskRepository();
     }
 
     public CategoryRepository getCategoryRepository() {
@@ -28,6 +30,14 @@ public class MotherOfRepositories {
 
     public RestaurantTableRepository getRestaurantTableRepository() {
         return restaurantTableRepository;
+    }
+
+    public WaiterRepository getWaiterRepository() {
+        return waiterRepository;
+    }
+
+    public TaskRepository getTaskRepository() {
+        return taskRepository;
     }
 
     public void seed(){
@@ -49,8 +59,8 @@ public class MotherOfRepositories {
         categoryRepository.save(salate);
         categoryRepository.save(racoritoare);
 
-        RestaurantTable table1 = new RestaurantTable("1","1","1234");
-        RestaurantTable table2 = new RestaurantTable("2","1","1234");
+        RestaurantTable table1 = new RestaurantTable("1","1","1234", 1);
+        RestaurantTable table2 = new RestaurantTable("2","1","1234",1);
 
         restaurantTableRepository.save(table1);
         restaurantTableRepository.save(table2);
@@ -138,5 +148,9 @@ public class MotherOfRepositories {
         productRepository.save(quatroStagioni);
         productRepository.save(porc);
         productRepository.save(cola);
+
+        Waiter andrei = new Waiter("Andrei Iorga", "andrei261093", 1, "1234");
+
+        waiterRepository.save(andrei);
     }
 }

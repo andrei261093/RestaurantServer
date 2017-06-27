@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import javafx.application.Platform;
 import model.RestaurantTable;
+import model.Task;
+import model.Waiter;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.UrlEncoded;
 import org.json.JSONObject;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import static spark.Spark.*;
 
@@ -59,14 +62,19 @@ public class RestServer {
             return gson.toJson(restaurantTable);
         });
 
+        get("/getTasks/:zone", (request, response) -> {
+            List<Task> tasks = motherOfRepositories.getTaskRepository().getByZone(request.params(":zone"));
+            return gson.toJson(tasks);
+        });
+
         get("/getCategories", (request, response) -> {
-          //  mainController.log("GET: /getCategories");
+            //  mainController.log("GET: /getCategories");
             String json = gson.toJson(motherOfRepositories.getCategoryRepository().findAll());
             return json;
         });
 
         get("/getProducts", (request, response) -> {
-         //   mainController.log("GET: /getProducts");
+            //   mainController.log("GET: /getProducts");
             String json = gson.toJson(motherOfRepositories.getProductRepository().findAll());
             return json;
         });
@@ -77,10 +85,29 @@ public class RestServer {
             String order = params.getString("order");
             JSONObject jsonObject = new JSONObject(order);
 
-         //  mainController.log("POST: /checkOrder");
+            //  mainController.log("POST: /checkOrder");
             taskAssigner.checkOrder(jsonObject);
 
             return "200";
+        });
+
+        post("/markAsDone/:id", (request, response) -> {
+            String a = request.params(":id");
+            Task task = null;
+            try {
+                int id = Integer.parseInt(request.params(":id"));
+                task = motherOfRepositories.getTaskRepository().findOne(id);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if(task.getDone()){
+                task.setDone(false);
+            }else{
+                task.setDone(true);
+            }
+            motherOfRepositories.getTaskRepository().update(task);
+
+            return 200;
         });
 
         post("/newOrder", (request, response) -> {
@@ -89,14 +116,32 @@ public class RestServer {
             String order = params.getString("order");
             JSONObject jsonObject = new JSONObject(order);
 
-           // mainController.log("POST: /newOrder");
+            // mainController.log("POST: /newOrder");
             taskAssigner.newOrder(jsonObject);
 
             return "200";
         });
 
+        post("/registerToken", (request, response) -> {
+            MultiMap<String> params = new MultiMap<String>();
+            UrlEncoded.decodeTo(request.body(), params, "UTF-8");
 
+            try{
+                int id = Integer.parseInt(params.getString("id"));
+                Waiter waiter = motherOfRepositories.getWaiterRepository().findOne(id);
+                waiter.setToken(params.getString("token"));
 
+                motherOfRepositories.getWaiterRepository().update(waiter);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "200";
+        });
+
+        get("/getWaiter/:username", (request, response) -> {
+            Waiter waiter = motherOfRepositories.getWaiterRepository().getByName(request.params(":username"));
+            return gson.toJson(waiter);
+        });
 
         //stop server
         after((request, response) -> {

@@ -1,14 +1,27 @@
 package Controllers;
 
 import SocketServer.TCPServer;
+import com.google.gson.Gson;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.async.Callback;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import model.TableSession;
+import model.Task;
+import model.Waiter;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import repositories.MotherOfRepositories;
+import staticUtils.UtilStaticVariables;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Created by andreiiorga on 24/06/2017.
@@ -78,15 +91,18 @@ public class TaskAssigner {
         JSONObject orderForWaiter = new JSONObject();
 
         orderForKitchen.put("tableNo", order.getString("tableNo"));
+        orderForKitchen.put("tableZone", order.getString("tableZone"));
         orderForKitchen.put("products", toKitchenProducts);
+
         orderForWaiter.put("tableNo", order.getString("tableNo"));
+        orderForWaiter.put("tableZone", order.getString("tableZone"));
         orderForWaiter.put("products", toWaiterProducts);
 
-        if(orderForKitchen.getJSONArray("products").length() != 0){
+        if (orderForKitchen.getJSONArray("products").length() != 0) {
             sendToKitchen(orderForKitchen);
         }
 
-        if(orderForWaiter.getJSONArray("products").length() != 0){
+        if (orderForWaiter.getJSONArray("products").length() != 0) {
             sendToWaiter(orderForWaiter);
         }
     }
@@ -95,8 +111,50 @@ public class TaskAssigner {
         mainController.sendToKitchen(orderForKitchen);
     }
 
-    private void sendToWaiter(JSONObject orderForWaiter) {
+    public void sendToWaiter(JSONObject orderForWaiter) {
         mainController.log("Order for table " + orderForWaiter.getString("tableNo") + " sent to waiter");
+        sendNotification(orderForWaiter);
+        String zone = orderForWaiter.getString("tableZone");
+        Waiter waiter = motherOfRepositories.getWaiterRepository().getByZone(zone);
+        JSONObject waiterJson = new JSONObject(new Gson().toJson(waiter));
+        orderForWaiter.put("waiter", waiterJson);
+        Task task = new Task(orderForWaiter);
+        try{
+            motherOfRepositories.getTaskRepository().save(task);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void sendNotification(JSONObject orderForWaiter) {
+        Waiter waiter = motherOfRepositories.getWaiterRepository().getByZone(orderForWaiter.getString("tableZone"));
+
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpPost post = new HttpPost("https://fcm.googleapis.com/fcm/send");
+        post.setHeader("Content-type", "application/json");
+        post.setHeader("Authorization", "key=" + UtilStaticVariables.FIREBASE_PROJECT_KEY);
+
+        JSONObject message = new JSONObject();
+        message.put("to", waiter.getToken());
+        message.put("priority", "high");
+
+        JSONObject notification = new JSONObject();
+        notification.put("message", "New order");
+        notification.put("title", "Order for Table " + orderForWaiter.getString("tableNo"));
+
+        message.put("data", notification);
+
+        post.setEntity(new StringEntity(message.toString(), "UTF-8"));
+        HttpResponse response = null;
+        try {
+            response = client.execute(post);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(response);
+        System.out.println(message);
+
     }
 
     public void newOrder(JSONObject order) {
@@ -123,6 +181,7 @@ public class TaskAssigner {
         }
         return null;
     }
+
 
 
 }

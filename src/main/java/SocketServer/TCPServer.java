@@ -4,6 +4,7 @@ import Controllers.MainController;
 import Controllers.TaskAssigner;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import org.json.JSONObject;
 import staticUtils.UtilStaticVariables;
 
 import java.io.IOException;
@@ -91,5 +92,16 @@ public class TCPServer implements Runnable {
         Platform.runLater(() -> {
             mainController.setKitchenConnected(b);
         });
+    }
+
+    public void sendToTaskAssigner(String message){
+        JSONObject order = null;
+
+        try{
+            order = new JSONObject(message);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        taskAssigner.sendToWaiter(order);
     }
 }

@@ -17,7 +17,7 @@ public abstract class AbstractHibernateDAO<T extends Serializable> {
     }
 
 
-    public T findOne(final long id) {
+    public T findOne(final int id) {
         return (T) session.get(clazz, id);
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractHibernateDAO<T extends Serializable> {
     }
 
 
-    public void deleteById(final long id) {
+    public void deleteById(final int id) {
         final T entity = findOne(id);
         session.beginTransaction();
         delete(entity);

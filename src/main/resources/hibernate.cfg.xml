@@ -22,7 +22,9 @@
 
         <mapping class="model.Category" />
         <mapping class="model.Product" />
+        <mapping class="model.Waiter"/>
         <mapping class="model.RestaurantTable" />
+        <mapping class="model.Task"/>
 
 
 

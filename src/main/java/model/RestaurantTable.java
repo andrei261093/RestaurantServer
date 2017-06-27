@@ -20,11 +20,13 @@ public class RestaurantTable implements Serializable{
     private String tableNo;
     private String tableZone;
     private String tablePassword;
+    private int zone;
 
-    public RestaurantTable(String tableNo, String tableZone, String tablePassword) {
+    public RestaurantTable(String tableNo, String tableZone, String tablePassword, int zone) {
         this.tableNo = tableNo;
         this.tableZone = tableZone;
         this.tablePassword = tablePassword;
+        this.zone = zone;
     }
 
     public RestaurantTable() {
@@ -52,5 +54,13 @@ public class RestaurantTable implements Serializable{
 
     public void setTablePassword(String tablePassword) {
         this.tablePassword = tablePassword;
+    }
+
+    public int getZone() {
+        return zone;
+    }
+
+    public void setZone(int zone) {
+        this.zone = zone;
     }
 }
