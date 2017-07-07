@@ -9,6 +9,7 @@ import Controllers.TaskAssigner;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import javafx.application.Platform;
+import model.Product;
 import model.RestaurantTable;
 import model.Task;
 import model.Waiter;
@@ -25,6 +26,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import static spark.Spark.*;
@@ -46,7 +50,6 @@ public class RestServer {
     public void startServer() {
         port(UtilStaticVariables.REST_SERVER_PORT);
 
-
         //routes
         get("/helloworld", (request, response) -> {
             mainController.log("Route /helloworld has been accessed");
@@ -64,18 +67,36 @@ public class RestServer {
 
         get("/getTasks/:zone", (request, response) -> {
             List<Task> tasks = motherOfRepositories.getTaskRepository().getByZone(request.params(":zone"));
+            Collections.reverse(tasks);
             return gson.toJson(tasks);
         });
 
+        get("/callWaiter/:tableId", (request, response) -> {
+            RestaurantTable table = motherOfRepositories.getRestaurantTableRepository().getByName(request.params(":tableId"));
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("tableNo", table.getTableNo());
+            jsonObject.put("tableZone", table.getZone() + "");
+
+            taskAssigner.sendToWaiter(jsonObject, UtilStaticVariables.TASK_GO_TO_TABLE);
+
+            return 200;
+        });
+
         get("/getCategories", (request, response) -> {
-            //  mainController.log("GET: /getCategories");
             String json = gson.toJson(motherOfRepositories.getCategoryRepository().findAll());
             return json;
         });
 
         get("/getProducts", (request, response) -> {
             //   mainController.log("GET: /getProducts");
-            String json = gson.toJson(motherOfRepositories.getProductRepository().findAll());
+            String json = null;
+            try{
+                List<Product> products = motherOfRepositories.getProductRepository().findAll();
+                json = gson.toJson(products);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             return json;
         });
 
@@ -100,9 +121,9 @@ public class RestServer {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if(task.getDone()){
+            if (task.getDone()) {
                 task.setDone(false);
-            }else{
+            } else {
                 task.setDone(true);
             }
             motherOfRepositories.getTaskRepository().update(task);
@@ -126,13 +147,13 @@ public class RestServer {
             MultiMap<String> params = new MultiMap<String>();
             UrlEncoded.decodeTo(request.body(), params, "UTF-8");
 
-            try{
+            try {
                 int id = Integer.parseInt(params.getString("id"));
                 Waiter waiter = motherOfRepositories.getWaiterRepository().findOne(id);
                 waiter.setToken(params.getString("token"));
 
                 motherOfRepositories.getWaiterRepository().update(waiter);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return "200";

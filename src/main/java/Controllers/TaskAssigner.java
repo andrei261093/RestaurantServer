@@ -6,6 +6,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import model.FinalOrder;
 import model.TableSession;
 import model.Task;
 import model.Waiter;
@@ -57,7 +58,7 @@ public class TaskAssigner {
     }
 
     private void notifyCheckOrderWaiter(JSONObject finalOrder) {
-
+        sendToWaiter(finalOrder, UtilStaticVariables.TASK_TYPE_CHECK);
     }
 
     private void removeOrder(String tableNo) {
@@ -70,6 +71,17 @@ public class TaskAssigner {
     }
 
     private void saveOrderToDB(JSONObject jsonObject) {
+        try{
+            int tableNo = Integer.parseInt(jsonObject.getString("tableNo"));
+            int waiterId = jsonObject.getJSONObject("waiter").getInt("id");
+            int price = jsonObject.getInt("totalPrice");
+
+            FinalOrder finalOrder = new FinalOrder(jsonObject.toString(), tableNo, waiterId, price);
+
+            motherOfRepositories.getFinalOrderRepository().save(finalOrder);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void assignOrder(JSONObject order) {
@@ -103,7 +115,7 @@ public class TaskAssigner {
         }
 
         if (orderForWaiter.getJSONArray("products").length() != 0) {
-            sendToWaiter(orderForWaiter);
+            sendToWaiter(orderForWaiter, UtilStaticVariables.TASK_TYPE_ORDER);
         }
     }
 
@@ -111,25 +123,32 @@ public class TaskAssigner {
         mainController.sendToKitchen(orderForKitchen);
     }
 
-    public void sendToWaiter(JSONObject orderForWaiter) {
-        mainController.log("Order for table " + orderForWaiter.getString("tableNo") + " sent to waiter");
+    public void sendToWaiter(JSONObject orderForWaiter, String taskType) {
+
         sendNotification(orderForWaiter);
         String zone = orderForWaiter.getString("tableZone");
         Waiter waiter = motherOfRepositories.getWaiterRepository().getByZone(zone);
         JSONObject waiterJson = new JSONObject(new Gson().toJson(waiter));
         orderForWaiter.put("waiter", waiterJson);
+        orderForWaiter.put("taskType", taskType);
         Task task = new Task(orderForWaiter);
-        try{
+        try {
             motherOfRepositories.getTaskRepository().save(task);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
     public void sendNotification(JSONObject orderForWaiter) {
-        Waiter waiter = motherOfRepositories.getWaiterRepository().getByZone(orderForWaiter.getString("tableZone"));
+        Waiter waiter = null;
+        try {
+            waiter = motherOfRepositories.getWaiterRepository().getByZone(orderForWaiter.getString("tableZone"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        mainController.log("Order for table " + orderForWaiter.getString("tableNo") + " assigned to " + waiter.getName());
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost("https://fcm.googleapis.com/fcm/send");
         post.setHeader("Content-type", "application/json");
@@ -141,7 +160,7 @@ public class TaskAssigner {
 
         JSONObject notification = new JSONObject();
         notification.put("message", "New order");
-        notification.put("title", "Order for Table " + orderForWaiter.getString("tableNo"));
+        notification.put("title", "FinalOrder for Table " + orderForWaiter.getString("tableNo"));
 
         message.put("data", notification);
 
@@ -169,7 +188,6 @@ public class TaskAssigner {
             newTableSession.addChunk(order);
             this.tables.add(newTableSession);
         }
-
         assignOrder(order);
     }
 
@@ -181,7 +199,6 @@ public class TaskAssigner {
         }
         return null;
     }
-
 
 
 }

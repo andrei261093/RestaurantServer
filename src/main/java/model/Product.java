@@ -1,5 +1,7 @@
 package model;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -11,7 +13,7 @@ import java.io.Serializable;
 @Table
 public class Product implements Serializable{
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
     private String name;
@@ -22,6 +24,7 @@ public class Product implements Serializable{
     private int category;
     private int price;
     private int weight;
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean needsPreparation;
 
     public Product(String name, String shortDescription, String longDescription, String imageUrl, int category, int price, int weight, Boolean needsPreparation) {
@@ -33,6 +36,9 @@ public class Product implements Serializable{
         this.price = price;
         this.weight = weight;
         this.needsPreparation = needsPreparation;
+    }
+
+    public Product() {
     }
 
     public String getName() {

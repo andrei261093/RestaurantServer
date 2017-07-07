@@ -14,7 +14,7 @@ import java.util.Date;
 @Table
 public class Task implements Serializable{
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
     private String waiterName;
@@ -22,6 +22,8 @@ public class Task implements Serializable{
     private String taskJson;
     private Boolean isDone = false;
     private int zoneID;
+    private String taskType;
+    private int waiterId;
 
     private Date onCreate;
     private Date onUpdate;
@@ -29,7 +31,12 @@ public class Task implements Serializable{
     public Task(JSONObject taskJson) {
         this.taskJson = taskJson.toString();
         this.waiterName = taskJson.getJSONObject("waiter").getString("name");
+        this.waiterId = taskJson.getJSONObject("waiter").getInt("id");
         this.zoneID = taskJson.getInt("tableZone");
+        this.taskType = taskJson.getString("taskType");
+    }
+
+    public Task() {
     }
 
     public String getTaskJson() {
@@ -78,5 +85,13 @@ public class Task implements Serializable{
 
     public void setOnUpdate(Date onUpdate) {
         this.onUpdate = onUpdate;
+    }
+
+    public String getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
     }
 }

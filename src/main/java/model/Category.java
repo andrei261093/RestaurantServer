@@ -1,9 +1,8 @@
 package model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -12,12 +11,17 @@ import java.io.Serializable;
 @Entity
 @Table
 public class Category implements Serializable{
+/*
     @Id
     @GeneratedValue
     private int id;
+*/
+
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private int id;
 
     private String name;
-
     private String imageUrl;
 
     public Category(String name, String imageUrl) {

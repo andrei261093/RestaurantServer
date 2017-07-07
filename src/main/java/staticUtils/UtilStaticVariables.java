@@ -13,4 +13,8 @@ public class UtilStaticVariables {
     public static String LEVEL_LOG = "LOG";
     public static String LEVEL_WARNING = "WARNING";
     public static String LEVEL_ERROR = "ERROR";
+
+    public static String TASK_TYPE_ORDER = "ORDER";
+    public static String TASK_TYPE_CHECK = "CHECK";
+    public static String TASK_GO_TO_TABLE = "HELP";
 }

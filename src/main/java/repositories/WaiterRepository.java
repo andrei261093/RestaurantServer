@@ -18,6 +18,7 @@ public class WaiterRepository extends AbstractHibernateDAO<Waiter>{
         Query query = getCurrentSession().createQuery("from Waiter where username=:username");
         query.setParameter("username", username);
         Waiter waiter = (Waiter) query.uniqueResult();
+        getCurrentSession().refresh(waiter);
         return waiter;
     }
 

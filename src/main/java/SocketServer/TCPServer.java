@@ -102,6 +102,6 @@ public class TCPServer implements Runnable {
         }catch (Exception e){
             e.printStackTrace();
         }
-        taskAssigner.sendToWaiter(order);
+        taskAssigner.sendToWaiter(order, UtilStaticVariables.TASK_TYPE_ORDER);
     }
 }

@@ -11,6 +11,9 @@ public class MotherOfRepositories {
     private RestaurantTableRepository restaurantTableRepository;
     private WaiterRepository waiterRepository;
     private TaskRepository taskRepository;
+    private ZoneRepository zoneRepository;
+    private OrderRepository orderRepository;
+    private FinalOrderRepository finalOrderRepository;
 
     public MotherOfRepositories() {
         categoryRepository = new CategoryRepository();
@@ -18,6 +21,17 @@ public class MotherOfRepositories {
         restaurantTableRepository = new RestaurantTableRepository();
         waiterRepository = new WaiterRepository();
         taskRepository = new TaskRepository();
+        zoneRepository = new ZoneRepository();
+        orderRepository = new OrderRepository();
+        finalOrderRepository = new FinalOrderRepository();
+    }
+
+    public OrderRepository getOrderRepository() {
+        return orderRepository;
+    }
+
+    public ZoneRepository getZoneRepository() {
+        return zoneRepository;
     }
 
     public CategoryRepository getCategoryRepository() {
@@ -40,6 +54,10 @@ public class MotherOfRepositories {
         return taskRepository;
     }
 
+    public FinalOrderRepository getFinalOrderRepository() {
+        return finalOrderRepository;
+    }
+
     public void seed(){
         Category pizza = new Category("Pizza", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqFcPFlg8v_QdOcVryz1xp2cmwaWkwbd7MYegAP1zSQHeCMHYa");
         Category friptura = new Category("Fripturi", "http://storage0.dms.mpinteractiv.ro/media/2/2/24986/10533179/14/miel-main.jpg?width=470");
@@ -60,7 +78,7 @@ public class MotherOfRepositories {
         categoryRepository.save(racoritoare);
 
         RestaurantTable table1 = new RestaurantTable("1","1","1234", 1);
-        RestaurantTable table2 = new RestaurantTable("2","1","1234",1);
+        RestaurantTable table2 = new RestaurantTable("2","2","1234",2);
 
         restaurantTableRepository.save(table1);
         restaurantTableRepository.save(table2);
@@ -149,8 +167,15 @@ public class MotherOfRepositories {
         productRepository.save(porc);
         productRepository.save(cola);
 
-        Waiter andrei = new Waiter("Andrei Iorga", "andrei261093", 1, "1234");
+        Zone zone1 = new Zone(1);
+        zoneRepository.save(zone1);
 
-        waiterRepository.save(andrei);
+        Waiter diana = new Waiter("Diana Stoian", "dsv", zone1.getZone(), "1234");
+
+
+        waiterRepository.save(diana);
+
+        FinalOrder finalOrder = new FinalOrder("json", 1,2, 6);
+        orderRepository.save(finalOrder);
     }
 }

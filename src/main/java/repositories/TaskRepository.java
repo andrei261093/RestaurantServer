@@ -17,9 +17,16 @@ public class TaskRepository extends AbstractHibernateDAO<Task>{
     }
 
     public List<Task> getByZone(String zone) {
-        Query query = getCurrentSession().createQuery("from Task where zoneID=:zone");
-        query.setParameter("zone", Integer.parseInt(zone));
-        List<Task> tasks = ( List<Task>) query.list();
+        List<Task> tasks=null;
+        try{
+            Query query = getCurrentSession().createQuery("from Task where zoneID=:zone and isDone=:ok");
+            query.setParameter("zone", Integer.parseInt(zone));
+            query.setParameter("ok", Boolean.FALSE);
+            tasks = (List<Task>) query.list();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         return tasks;
     }
 

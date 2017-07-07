@@ -76,12 +76,12 @@ public class MainController {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (!newValue.matches("\\d*")) {
-                    restPortInput.setText(newValue.replaceAll("[^\\d]", ""));
+                    socketPortInput.setText(newValue.replaceAll("[^\\d]", ""));
                 }
             }
         });
         motherOfRepositories = new MotherOfRepositories();
-        motherOfRepositories.seed();
+     //   motherOfRepositories.seed();
         taskAssigner = new TaskAssigner(this, motherOfRepositories);
         restServer = new RestServer(this, motherOfRepositories, taskAssigner);
     }
@@ -184,7 +184,7 @@ public class MainController {
 
     public void sendToKitchen(JSONObject order) {
         tcpServer.tellEveryone(order.toString());
-        log("Order for table " + order.getString("tableNo") + " sent to kitchen");
+        log("FinalOrder for table " + order.getString("tableNo") + " sent to kitchen");
     }
 
     public void showTableSessions(ActionEvent actionEvent) {

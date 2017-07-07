@@ -18,7 +18,10 @@ public abstract class AbstractHibernateDAO<T extends Serializable> {
 
 
     public T findOne(final int id) {
-        return (T) session.get(clazz, id);
+        T object = (T) session.get(clazz, id);
+        session.update(object);
+        session.evict(object);
+        return object;
     }
 
 

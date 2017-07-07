@@ -3,6 +3,7 @@ package SocketServer;
 import staticUtils.UtilStaticVariables;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -37,17 +38,16 @@ public class ClientHandler implements Runnable {
         String message;
         try {
             while ((message = reader.readLine()) != null) {
-
                 String[] msg = message.split(":");
                 if(msg[2].equals("Disconnect")){
                     sock.close();
                     tcpServer.setKitchenConnected(false);
                 }else{
-                    tcpServer.log("From KITCHEN: " + msg[1]);
+                    //tcpServer.log("From KITCHEN: " + msg[1]);
                     tcpServer.sendToTaskAssigner(message);
                 }
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
             tcpServer.log("Kitchen has disconnected!", UtilStaticVariables.LEVEL_WARNING);
             tcpServer.setKitchenConnected(false);
